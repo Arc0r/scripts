@@ -56,8 +56,9 @@ read
 #NC config
 apt install php-zip php-xml php-gd php-curl php-mbstring php-imagick php-apcu
 apache2ctl restart
-sed -i 's/output_buffering = 4096/output_buffering = Off/' /etc/php/*/apache2/php.ini
-sed -i 's/memory_limit = 128M/memory_limit = 1024M/' /etc/php/*/apache2/php.ini
+sed -i 's/output_buffering.*/output_buffering = Off/' /etc/php/*/apache2/php.ini
+sed -i 's/memory_limit.*/memory_limit = 1024M/' /etc/php/*/apache2/php.ini
+sed -i 's/opcache.interned_strings_buffer.*/opcache.interned_strings_buffer=16/' /etc/php/*/apache2/php.ini
 CONFIGNC=$(head -n -1 /var/www/nextcloud/config/config.php)
 cat > /var/www/nextcloud/config/config.php << EOF
 $CONFIGNC
