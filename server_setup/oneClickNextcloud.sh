@@ -54,15 +54,17 @@ echo "Pleas go to the webpage localhost:80/setup-nextcloud.php and finish the Se
 echo Finished?
 read
 #NC config
-apt install php-zip php-xml php-gd php-curl php-mbstring php-imagick
+apt install php-zip php-xml php-gd php-curl php-mbstring php-imagick php-apcu
 apache2ctl restart
-sed -i 's/output_buffering = 4096/output_buffering = Off/' /etc/php/*/apache2/php.ini
-sed -i 's/memory_limit = 128M/memory_limit = 1024M/' /etc/php/*/apache2/php.ini
+sed -i 's/output_buffering.*/output_buffering = Off/' /etc/php/*/apache2/php.ini
+sed -i 's/memory_limit.*/memory_limit = 1024M/' /etc/php/*/apache2/php.ini
+sed -i 's/opcache.interned_strings_buffer.*/opcache.interned_strings_buffer=16/' /etc/php/*/apache2/php.ini
 CONFIGNC=$(head -n -1 /var/www/nextcloud/config/config.php)
-cat >> /var/www/nextcloud/config/config.php << EOF
+cat > /var/www/nextcloud/config/config.php << EOF
 $CONFIGNC
 'skeletondirectory'=>'',
 'maintenance_window_start' => 1,
+'memcache.local' => '\OC\Memcache\APCu',
 );
 EOF
 sudo -u www-data php -f /var/www/nextcloud/occ maintenance:repair --include-expensive
